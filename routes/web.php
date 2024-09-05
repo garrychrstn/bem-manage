@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Post;
+use App\Http\Controllers\PostCont;
 use App\Http\Controllers\UserCont;
 use Illuminate\Support\Facades\Route;
 
@@ -15,9 +17,15 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    $posts = [];
+    if (auth()->check()){
+        $posts = auth()->user()->usersPost()->latest()->get();
+    }
+    return view('landing', ['posts' => $posts]);
 });
-Route::get('/landing', function() {
-    return view('landing');
-});
-Route::post('/landing/register', [UserCont::class, 'register']);
+Route::post('/register', [UserCont::class, 'register']);
+Route::post('/logout', [UserCont::class, 'logout']);
+Route::post('/login', [UserCont::class, 'login']);
+
+Route::post('/spost', [PostCont::class, 'sposts']);
+Route::get('/edit/post/{post}', [PostCont::class, 'edit']);
